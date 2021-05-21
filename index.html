@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HackMate IDE</title>
+
+  <!-- Obitron Font -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet"> 
+
+  <!--Bootstrap-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" defer>
+
+  <!--Split.js-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.2/split.min.js" integrity="sha512-to2k78YjoNUq8+hnJS8AwFg/nrLRFLdYYalb18SlcsFRXavCOTfBF3lNyplKkLJeB8YjKVTb1FPHGSy9sXfSdg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    .split {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .gutter {
+      background-color: #eee;
+      background-repeat: no-repeat;
+      background-position: 50%;
+    }
+
+    .gutter.gutter-horizontal {
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+      cursor: col-resize;
+    }
+
+    .editorBox {
+      background-color: #092047;
+      color: white;
+      height: 78vh;
+    }
+    .box-wrapper {
+      background-color: #0b468c;
+      color: white;
+    }
+    .toolbar-wrapper {
+      background-color: #09246a;
+    }
+    #fileViewer {
+      background-color: #fff;
+      color:black;
+      height:78vh;
+    }
+    .site-title {
+      font-size: 5vh;
+    }
+    .site-header {
+      border-top: 5px solid #060137;
+      border-bottom: 1px solid #0b468c;
+      min-height: 8vh;
+      background-color: #092047;
+      box-shadow: 1px 1px 10px black;
+      position: relative;
+      }
+    .site-title {
+      font-weight: 500;
+      line-height: 50px;
+      letter-spacing: -1px;
+      margin-bottom: 0;
+      font-family: "Orbitron",sans-serif;
+      color: yellow;
+      text-decoration: none;
+    }
+    .site-footer {
+      border-top: 1px solid #0b468c;
+      border-bottom: 10px solid #060137;
+      min-height: 4vh;
+      background-color: black;
+      box-shadow: -1px 1px 20px black;
+      position: relative;
+      }
+
+    @keyframes glowing-button {
+      0% {box-shadow:-1px 1px 20px #63345e;}
+      50% {box-shadow:-1px 1px 100px #092047;}
+      60% {box-shadow:-50px 1px 100px yellow;}
+      100% {box-shadow:-1px 1px 20px #63345e;}
+    }
+    .btn-major {
+      font-weight: 1000;
+      box-shadow: -1px 1px 20px #63345e;
+      animation-name: glowing-button;
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="jumbotron jumbotron-fluid site-header">
+    <div class="container-fluid">
+
+      <a class="site-title" id="IDE-name" rel="author" href="/">Hackmate</a>
+
+        <div class="btn-group me-2" style="float:right" role="group" aria-label="External Project loading button">
+          <input type="file" id="mydoc" class="btn btn-dark">
+          <button id="jackin" onClick="openFile()" class="btn btn-light">jackin</button>
+        </div>
+    </div>
+  </div>
+
+  <div class="box-wrapper container-fluid">
+    <div class="row">
+      <div class="split">
+        <div class="col-sm-4" id="split-0">
+          <h5>HTML/CSS</h5>
+          <div contenteditable="true" class="editorBox" id="file1"></div>
+        </div>
+
+        <div class="col-sm-4" id="split-1">
+          <h5>JavaScript</h5>
+          <div contenteditable="true" class="editorBox" id="file2"></div>
+        </div>
+
+        <div class="col-sm-4" id="split-2">
+          <h5>Output</h5>
+          <div contenteditable="true" id="fileViewer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar-wrapper container-fluid">
+    <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Code View and Run Toolbar">
+
+      <div class="btn-group me-2" role="group" aria-label="Local Storage project saving and loading buttons">
+        <input type="text" id="profileName" placeholder="profileName">        
+        <button onClick="saveFile()" class="btn btn-success">save</button>        
+        <button onClick="loadFile()" class="btn btn-warning">load</button>
+      </div>	    
+	    
+      <div class="btn-group me-2" role="group" aria-label="View and Run buttons group">
+        <button onClick="viewFile()" class="btn btn-primary btn-major">view</button>
+        <button onClick="runCode()"  class="btn btn-secondary btn-major">run</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="jumbotron jumbotron-fluid site-footer">
+    <div class="container">
+      <a href="http://ray6464.github.io/" style="color:#333;align:center">Built by Ray Voice</a>
+    </div>
+  </div>
+
+  <script defer>
+/* ToDO 
+	  1. Add a Dropdown for userprofiles attached to the typable input.
+	  2. Add a deleter user profile button.
+	  3. Make the file-upload/jackin button work properly.
+	  */
+
+
+        // global keys
+	const globalAppKey = "EditorHackMate";
+
+        // localStorage.setItem(globalAppKey + "users", ""); //used to delete all userProfiles
+
+	if (localStorage[globalAppKey +"users"] == undefined) {
+	  localStorage.setItem(globalAppKey + "users", "");
+        }
+
+	let userProfiles = [];
+        
+	function getUserProfiles() {
+	  const userProfilesRetrival = localStorage[globalAppKey +"users"];
+	  return [...userProfilesRetrival.split(",")];
+	}
+	userProfiles = getUserProfiles();
+	console.log(userProfiles);
+
+
+	 // Split.js boilerplate code start (imported in head)
+         // import Split from 'split.js' // Line commented out because syntax not required when using with CDN
+
+         Split(['#split-0', '#split-1', '#split-2'], {
+           gutterSize: 1,
+         });
+         // Split.js boilerplate code end
+
+        var window = [];
+
+        function openFile(){
+          
+          var fileURL = document.getElementById("mydoc");
+          var myFile = "file:///C:/Users/RayAnna-PC/Desktop/Alina's%20Folder/" + fileURL.files[0].name;
+         
+          var reader = new FileReader();
+          reader.readAsText(fileURL.files[0], "UTF-8");
+          reader.onload = function (evt){
+            document.getElementById("file1").value = evt.target.result;
+            }
+  
+        }
+
+         function viewFile(){
+           
+           var file = document.getElementById("file1").textContent;
+           var disp = document.getElementById("fileViewer");
+           disp.innerHTML = file;         
+           
+         }             
+
+         function runCode(){
+
+         var functionBody = document.getElementById("file2").textContent;
+         
+          (new Function([], functionBody))();
+        }
+
+        function saveFile(){
+          var pName = document.getElementById("profileName").value;
+
+          var htmlData = document.getElementById("file1").textContent;
+          var javascriptData = document.getElementById("file2").textContent;
+	
+	  localStorage.setItem(pName + globalAppKey + "HTML", htmlData);
+          localStorage.setItem(pName + globalAppKey + "Javascript", javascriptData); 
+          
+	  const userProfilesRetrival = getUserProfiles();
+          if (userProfilesRetrival == "") {
+            localStorage.setItem(globalAppKey + "users", pName);       
+	  } else {
+            localStorage.setItem(globalAppKey + "users", userProfilesRetrival + "," + pName);
+	  }
+
+          userProfiles = getUserProfiles();
+	  console.log(userProfiles);        
+       }
+      
+       function loadFile(){
+        var pName = document.getElementById("profileName").value;
+        var area1 = document.getElementById("file1");
+        var area2 = document.getElementById("file2");
+        area1.textContent = localStorage[pName + globalAppKey +"HTML"];
+        area2.textContent = localStorage[pName + globalAppKey +"Javascript"];
+       }
+
+      </script>
+    </body>
+</html>
