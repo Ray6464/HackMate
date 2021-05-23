@@ -92,6 +92,27 @@
       animation-iteration-count: infinite;
       animation-timing-function: ease-in;
     }
+    .floating-alert{
+      position:absolute;
+      top: 60vh;
+      left: 30vw;
+      width: 30vw;
+      visibility: hidden;
+    }
+    .floating-alert-big{
+      position:absolute;
+      top: 20vh;
+      left: 30vw;
+      width: 30vw;
+      max-height: 60vh;
+      overflow-y: auto;
+      visibility: hidden;
+    }
+    .close-btn{
+      position:absolute;
+      top: 0vh;
+      right: 0vw;
+    }
   </style>
 
 </head>
@@ -134,7 +155,14 @@
     <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Code View and Run Toolbar">
 
       <div class="btn-group me-2" role="group" aria-label="Local Storage project saving and loading buttons">
-        <input type="text" id="profileName" placeholder="profileName">        
+        <div class="input-group">
+          <input type="text" id="profileName" class="form-control" placeholder="Your Profile Name" aria-label="Your Profile Name" aria-describedby="basic-addon2">
+          <button class="btn btn-outline-light input-group-text" type="button" id="getSavedProfilesList" onclick="showAlert('listOfSavedProfilesMessage')">
+	    Profiles &nbsp;
+            <span class="badge bg-light text-dark" id="countOfProfiles">0</span>
+	  </button>
+
+        </div>
         <button onClick="saveFile()" class="btn btn-success">save</button>        
         <button onClick="loadFile()" class="btn btn-warning">load</button>
       </div>	    
@@ -143,7 +171,6 @@
         <button onClick="viewFile()" class="btn btn-primary btn-major">view</button>
         <button onClick="runCode()"  class="btn btn-secondary btn-major">run</button>
       </div>
-
     </div>
   </div>
 
@@ -153,13 +180,29 @@
     </div>
   </div>
 
+<div class="floating-alert alert alert-primary alert-dismissible fade show" role="alert" id="profileSaved">
+  <strong>Profile Saved!</strong> Your code was saved within your web-browser. Use your profile name to load it.
+  <button type="button" class="close btn close-btn" data-dismiss="alert" aria-label="Close" style="align:right" onclick="closeAlert('profileSaved')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="floating-alert-big alert alert-info alert-dismissible fade show" role="alert" id="listOfSavedProfilesMessage">
+  <strong>List of Saved Profiles</strong>
+  <ul id="listOfSavedProfiles"></ul>
+  <button type="button" class="close btn close-btn" data-dismiss="alert" aria-label="Close" style="align:right" onclick="closeAlert('listOfSavedProfilesMessage')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
+
   <script defer>
 /* ToDO 
 	  1. Add a Dropdown for userprofiles attached to the typable input.
 	  2. Add a deleter user profile button.
 	  3. Make the file-upload/jackin button work properly.
 	  */
-
 
         // global keys
 	const globalAppKey = "EditorHackMate";
@@ -174,7 +217,17 @@
         
 	function getUserProfiles() {
 	  const userProfilesRetrival = localStorage[globalAppKey +"users"];
-	  return [...userProfilesRetrival.split(",")];
+	  const profilesList = [...userProfilesRetrival.split(",")];
+	  document.getElementById("countOfProfiles").innerHTML = profilesList.length;
+          
+	  for (profileName of profilesList) {
+            var listItem = document.createElement("LI");
+            var listItemProfileName = document.createTextNode(profileName);
+            listItem.appendChild(listItemProfileName);
+            document.getElementById("listOfSavedProfiles").appendChild(listItem);
+	  }
+
+          return profilesList;
 	}
 	userProfiles = getUserProfiles();
 	console.log(userProfiles);
@@ -236,6 +289,8 @@
 
           userProfiles = getUserProfiles();
 	  console.log(userProfiles);        
+
+	  showAlert("profileSaved");
        }
       
        function loadFile(){
@@ -245,6 +300,15 @@
         area1.textContent = localStorage[pName + globalAppKey +"HTML"];
         area2.textContent = localStorage[pName + globalAppKey +"Javascript"];
        }
+
+      function showAlert(alertId){
+	document.getElementById(alertId).style.visibility = "visible";
+	setTimeout(()=>{ closeAlert(alertId) }, 10000);
+      }
+
+      function closeAlert(alertId){
+	document.getElementById(alertId).style.visibility = "hidden";
+      }
 
       </script>
     </body>
